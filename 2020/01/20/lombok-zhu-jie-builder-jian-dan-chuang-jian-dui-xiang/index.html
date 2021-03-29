@@ -1,0 +1,387 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Micro Ming">
+  
+  
+  
+  
+    <meta name="description" content="0x04：Java基础">
+  
+  <title>lombok注解@Builder简单创建对象 [ Micro Log ]</title>
+  
+  
+    <link rel="shortcut icon" href="/hollow.ico">
+  
+  
+  
+<link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2020/02/24/ji-yu-wechat-oauth-di-san-fang-deng-lu/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        基于WeChat-OAuth第三方登录
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2020/01/07/mybatis-select-fan-hui-zhi-wei-listlessmapgreaterbing-jiang-biao-zi-duan-de-liang-lie-zuo-wei-keyvalue/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Mybatis select返回值为List<Map>并将表字段的两列为K,V
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="https://avatars2.githubusercontent.com/u/2735087?s=60&u=775d4033139cae6b23c593bcf59fa433224ba4e3&v=4"/>
+          <div id="homelink">Micro Log</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/stiekel" target="_blank" rel="noopener">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  
+
+  <article id="post">
+    <h1>lombok注解@Builder简单创建对象</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2020-01-20</span>
+      
+        <span id = "post-title-updated">修改于 2020-02-24</span>
+      
+      
+      
+      <span id="/2020/01/20/lombok-zhu-jie-builder-jian-dan-chuang-jian-dui-xiang/" class="leancloud-visitors" data-flag-title="lombok注解@Builder简单创建对象">
+        <i class="leancloud-visitors-count"></i>
+        <em class="post-meta-item-text"> views </em>
+      </span>
+    </p>
+    
+    <p>0x04：<code>Java基础</code></p>
+<a id="more"></a>
+
+<p><strong>不废话注解开始：</strong></p>
+<h2 id="一、-导入依赖"><a href="#一、-导入依赖" class="headerlink" title="一、 导入依赖"></a><strong>一、 导入依赖</strong></h2><pre class=" language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.projectlombok<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>lombok<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>1.16.18<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">></span></span>provided<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span></code></pre>
+<h2 id="二、创建entity"><a href="#二、创建entity" class="headerlink" title="二、创建entity"></a><strong>二、创建entity</strong></h2><pre class=" language-java"><code class="language-java"><span class="token keyword">import</span> lombok<span class="token punctuation">.</span>Builder<span class="token punctuation">;</span>
+<span class="token keyword">import</span> lombok<span class="token punctuation">.</span>Data<span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">/**
+ * @Description //TODO .
+ * @Author by LiuChunming on 2020/01/20.
+ */</span>
+<span class="token annotation punctuation">@Builder</span>
+<span class="token annotation punctuation">@Data</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Tper</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> String id<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> String name<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> String age<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> String sex<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> String hobby<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">double</span> aDouble<span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<blockquote>
+<p><strong>并添加注解 @Builder @Data</strong></p>
+</blockquote>
+<h2 id="三、开始测试"><a href="#三、开始测试" class="headerlink" title="三、开始测试"></a><strong>三、开始测试</strong></h2><pre class=" language-java"><code class="language-java"><span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">builderInterfaceTest</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//创建对象</span>
+        Tper tper <span class="token operator">=</span> Tper<span class="token punctuation">.</span><span class="token function">builder</span> <span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>
+                <span class="token function">name</span> <span class="token punctuation">(</span> <span class="token string">"张三"</span> <span class="token punctuation">)</span><span class="token punctuation">.</span>
+                <span class="token function">age</span> <span class="token punctuation">(</span> <span class="token string">"19"</span> <span class="token punctuation">)</span><span class="token punctuation">.</span>
+                <span class="token function">sex</span> <span class="token punctuation">(</span> <span class="token string">"男"</span> <span class="token punctuation">)</span><span class="token punctuation">.</span>
+                <span class="token function">hobby</span> <span class="token punctuation">(</span> <span class="token string">"Code"</span> <span class="token punctuation">)</span><span class="token punctuation">.</span>
+                <span class="token function">aDouble</span> <span class="token punctuation">(</span> <span class="token number">8D</span> <span class="token punctuation">)</span><span class="token punctuation">.</span>
+                <span class="token function">build</span> <span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span> <span class="token punctuation">(</span> tper <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span></code></pre>
+<ul>
+<li><strong>测试结果：</strong></li>
+</ul>
+<p>​    <img src="https://pjmic.github.io//post-images/1579484887683.jpg" alt=""></p>
+<blockquote>
+<p><strong>Share Over !</strong></p>
+</blockquote>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、-导入依赖"><span class="toc-text">一、 导入依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、创建entity"><span class="toc-text">二、创建entity</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、开始测试"><span class="toc-text">三、开始测试</span></a></li></ol>
+  </div>
+</div>
+
+  
+  
+<nav id="pagination">
+  
+    <a href="/2020/02/24/ji-yu-wechat-oauth-di-san-fang-deng-lu/" class="prev">&larr; 上一篇 基于WeChat-OAuth第三方登录</a>
+  
+
+  
+
+  
+    <a href="/2020/01/07/mybatis-select-fan-hui-zhi-wei-listlessmapgreaterbing-jiang-biao-zi-duan-de-liang-lie-zuo-wei-keyvalue/" class="next">下一篇 Mybatis select返回值为List<Map>并将表字段的两列为K,V &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Micro Ming using
+      <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random" target="_blank" rel="noopener">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="https://avatars2.githubusercontent.com/u/2735087?s=60&u=775d4033139cae6b23c593bcf59fa433224ba4e3&v=4">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/stiekel" target="_blank" rel="noopener">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/sidcn" target="_blank" rel="noopener">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="histkc@gmail.com">
+        
+          M
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["flash"],"timer":true,"delay":1500000,"shuffle":true,"count":12};
+var unsplashConfig = {"gravity":"center"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
