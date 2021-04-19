@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Mybatis select返回值为List&lt;Map&gt;并将表字段的两列为K,V, Micro Log">
+    <meta name="keywords" content="CentOS只安装mysql client, Micro Log">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mybatis select返回值为List&lt;Map&gt;并将表字段的两列为K,V | Micro Log</title>
+    <title>CentOS只安装mysql client | Micro Log</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mybatis select返回值为List&lt;Map&gt;并将表字段的两列为K,V</h1>
+                    <h1 class="description center-align post-title">CentOS只安装mysql client</h1>
                 </div>
             </div>
         </div>
@@ -443,7 +443,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-01-07
+                    2021-04-20
                 </div>
                 
 
@@ -459,31 +459,36 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>0x03：<code>mybatis</code></p>
-<a id="more"></a>
+                <h2 id="CentOS只安装mysql-client"><a href="#CentOS只安装mysql-client" class="headerlink" title="CentOS只安装mysql client"></a>CentOS只安装mysql client</h2><h3 id="开箱即用-gt-gt-gt-gt"><a href="#开箱即用-gt-gt-gt-gt" class="headerlink" title="开箱即用 &gt;&gt;&gt;&gt;"></a>开箱即用 &gt;&gt;&gt;&gt;</h3><pre class="line-numbers language-shell"><code class="language-shell"># 获取最新源 https://dev.mysql.com/downloads/repo/yum/
+# 此处通过 rpm去安装yum源
+wget https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
 
-<h2 id="场景重现"><a href="#场景重现" class="headerlink" title="场景重现"></a>场景重现</h2><hr/>
-### 表中有这样的数据
+# 本地安装下载的rpm源
+sudo yum localinstall mysql80-community-release-el7-3.noarch.rpm 
 
-<p><img src="https://pjmic.github.io//post-images/1578412769529.jpg" alt=""></p>
-<h3 id="需要实现"><a href="#需要实现" class="headerlink" title="需要实现"></a>需要实现</h3><p><img src="https://pjmic.github.io//post-images/1578412975303.jpg" alt=""></p>
-<h3 id="思路是重写返回Mybatis-select默认映射Map的返回接口，通过源码追踪，发现-“ResultHandler”这个接口"><a href="#思路是重写返回Mybatis-select默认映射Map的返回接口，通过源码追踪，发现-“ResultHandler”这个接口" class="headerlink" title="思路是重写返回Mybatis select默认映射Map的返回接口，通过源码追踪，发现 “ResultHandler”这个接口;"></a>思路是重写返回Mybatis select默认映射Map的返回接口，通过源码追踪，发现 “ResultHandler”这个接口;</h3><pre class=" language-java"><code class="language-java"><span class="token keyword">package</span> org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>ibatis<span class="token punctuation">.</span>session<span class="token punctuation">;</span>
+# 检查是否生效
+yum repolist enabled | grep "mysql.*-community.*"
 
-<span class="token comment" spellcheck="true">/**
- * @author Clinton Begin
- */</span>
-<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">ResultHandler</span><span class="token operator">&lt;</span>T<span class="token operator">></span> <span class="token punctuation">{</span>
+# 会看见类似结果，说明生效
+[root@VM-8-8-centos ~]# yum repolist enabled | grep "mysql.*-community.*"
+mysql-connectors-community/x86_64   MySQL Connectors Community               194
+mysql-tools-community/x86_64        MySQL Tools Community                    126
+mysql80-community/x86_64            MySQL 8.0 Community Server               247
 
-  <span class="token keyword">void</span> <span class="token function">handleResult</span><span class="token punctuation">(</span>ResultContext<span class="token operator">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">T</span><span class="token operator">></span> resultContext<span class="token punctuation">)</span><span class="token punctuation">;</span>
+# 下面通过yum查看是否有 mysql-community-client
+yum search mysql | grep "mysql.*client"
 
-<span class="token punctuation">}</span></code></pre>
-<h3 id="通过观察他的实现有两个实现："><a href="#通过观察他的实现有两个实现：" class="headerlink" title="通过观察他的实现有两个实现："></a>通过观察他的实现有两个实现：</h3><ul>
-<li><p>DefaultMapResultHandler :  返回的是 Map</p>
-</li>
-<li><p>DefaultResultHandler ：返回的是 List<Object></p>
-</li>
-</ul>
-<p>#待续。。。。</p>
+# 看结果 已存在 'mysql-community-client'，最后去安装即可
+[root@VM-8-8-centos ~]# yum search mysql | grep "mysql.*client"
+mysql-community-client.i686 : MySQL database client applications and tools
+mysql-community-client.x86_64 : MySQL database client applications and tools
+mysql-community-client-plugins.i686 : Shared plugins for MySQL client
+mysql-community-client-plugins.x86_64 : Shared plugins for MySQL client
+mysql-community-common.i686 : MySQL database common files for server and client
+mysql-community-libs.i686 : Shared libraries for MySQL database client
+mysql-community-libs.x86_64 : Shared libraries for MySQL database client
+root-sql-mysql.x86_64 : MySQL client plugin for ROOT<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>参考</strong>【<a href="https://dev.mysql.com/doc/refman/5.7/en/linux-installation-rpm.html" target="_blank" rel="noopener">MYSQL官网安装教程</a>】</p>
 
             </div>
             <hr/>
@@ -509,7 +514,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://yoursite.com/2020/01/07/mybatis-select-fan-hui-zhi-wei-listlessmapgreaterbing-jiang-biao-zi-duan-de-liang-lie-zuo-wei-keyvalue/">http://yoursite.com/2020/01/07/mybatis-select-fan-hui-zhi-wei-listlessmapgreaterbing-jiang-biao-zi-duan-de-liang-lie-zuo-wei-keyvalue/</a>
+                    <a href="http://yoursite.com/2021/04/20/centos-zhi-an-zhuang-mysql-client/">http://yoursite.com/2021/04/20/centos-zhi-an-zhuang-mysql-client/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -712,35 +717,32 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/01/20/lombok-zhu-jie-builder-jian-dan-chuang-jian-dui-xiang/">
+                <a href="/2021/04/20/centos-zhi-an-zhuang-mysql-client/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="lombok注解@Builder简单创建对象">
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="CentOS只安装mysql client">
                         
-                        <span class="card-title">lombok注解@Builder简单创建对象</span>
+                        <span class="card-title">CentOS只安装mysql client</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            0x04：Java基础
-
-
-不废话注解开始：
-一、 导入依赖&lt;dependency>
-    &lt;groupId>org.projectlombok&lt;/groupId>
-    &lt;artifactId>lombok&l
+                            CentOS只安装mysql client开箱即用 &gt;&gt;&gt;&gt;# 获取最新源 https://dev.mysql.com/downloads/repo/yum/
+# 此处通过 rpm去安装yum源
+wget https
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-01-20
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-04-20
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -749,6 +751,7 @@
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -759,31 +762,24 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/01/07/java-nei-sheng-ji-zhi/">
+                <a href="/2020/07/28/hello-world/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="Java内省机制">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="Hello World">
                         
-                        <span class="card-title">Java内省机制</span>
+                        <span class="card-title">Hello World</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            0x02：Java基础
-
-
-直接上代码package com.peidasoft.Introspector;
-
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-impo
+                            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-01-07
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-07-28
                             </span>
                         <span class="publish-author">
                             
@@ -792,14 +788,6 @@ impo
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/Java%E5%86%85%E7%9C%81/">
-                        <span class="chip bg-color">Java内省</span>
-                    </a>
-                    
                 </div>
                 
             </div>
